@@ -4,7 +4,7 @@ from streaming.camera import VideoCamera, LiveWebCam, videorecordinframe, genera
 from django.contrib import messages
 
 # Create your views here.
-
+# je vais ecris un commentaire dans views.py
 ############
 import cv2
 import time
