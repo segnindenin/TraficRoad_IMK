@@ -5,6 +5,7 @@ from django.contrib import messages
 
 # Create your views here.
 # je vais ecris un commentaire dans views.py
+# bon je refaire un autre commentaire
 ############
 import cv2
 import time
