@@ -1,0 +1,18 @@
+<html>
+
+  <head>
+    <title>Video Live Stream</title>
+  </head>
+
+  <body>
+    <h1>Video Live Stream</h1>
+    <img src="{% url 'VideoCamera_feed' %}">
+    <form action="" method="post" >
+      {% csrf_token %}
+      <input type="submit" value="Urgent PhoneCall">
+    </form>
+    {% block content %}{% endblock content %}
+
+  </body>
+
+</html>
