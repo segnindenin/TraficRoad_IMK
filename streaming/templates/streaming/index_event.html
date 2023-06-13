@@ -1,16 +1,18 @@
 <html>
 
   <head>
-    <title>Video Live Stream 2</title>
+    <title>Video Live Stream2</title>
   </head>
 
   <body>
     <h1>Video Live Stream</h1>
-    <img src="{% url 'VideoCamera_Event' %}">
-    <form action="" method="get" >
-      {% csrf_token %}
-      <input type="submit" value="Urgent PhoneCall">
-    </form>
+
+    <div>
+      <img src="{% url 'VideoCamera_Event' %}">
+    </div>
+
+    <a href="{% url 'index' %}">Retour</a>
+
     {% block content %}{% endblock content %}
 
   </body>

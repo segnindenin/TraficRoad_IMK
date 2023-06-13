@@ -6,11 +6,18 @@
 
   <body>
     <h1>Video Live Stream</h1>
-    <img src="{% url 'VideoCamera_feed' %}">
-    <form action="" method="post" >
+
+    <div>
+      <img src="{% url 'VideoCamera_Event' %}">
+    </div>
+
+    {% comment %} <a href="{% url 'Event' %}">Urgent PhoneCall</a> {% endcomment %}
+
+    <form action="" method="post">
       {% csrf_token %}
-      <input type="submit" value="Urgent PhoneCall">
+      <button type="submit" name="action" value="action1">Action 1</button>
     </form>
+
     {% block content %}{% endblock content %}
 
   </body>

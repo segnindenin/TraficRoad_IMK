@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http.response import StreamingHttpResponse
-from streaming.camera import VideoCamera, LiveWebCam, videorecordinframe, generate, FolderCur
+from streaming.camera import VideoCamera, LiveWebCam, videorecordinframe, generate, generateven, FolderCur
 from django.contrib import messages
 
 # Create your views here.
@@ -19,10 +19,49 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import pyaudio
 import wave
+import shutil
+
 p = pyaudio.PyAudio()
 
+def copier_fichier():
+    namefile = datetime.datetime.now().strftime('%Y%m%d')
+    heure = datetime.datetime.now().strftime('%H')
+    v1 = int(datetime.datetime.now().strftime('%M'))-4
+    v2 = int(datetime.datetime.now().strftime('%M'))-3
+    v3 = int(datetime.datetime.now().strftime('%M'))-2
+    v1 = f'{namefile}-{heure}{v1}.mp4'
+    v2 = f'{namefile}-{heure}{v2}.mp4'
+    v3 = f'{namefile}-{heure}{v3}.mp4'
+
+    files  = [v1, v2, v3]
+
+    for file in files:
+        destination = f'DataFileSystem\\Events\\videos'
+        source = f'DataFileSystem\\General\\videos\\{file}'
+        if os.path.exists(source) and not os.path.exists(f'{destination}\\{file}'):
+            shutil.copy2(source, destination)
+        else:
+            pass
+
 def index(request):
-	return render(request, 'streaming/index.html')
+    if request.method == "POST":
+        action = request.POST.get("action")  # Récupérer la valeur de l'action du bouton
+        
+        if action == "action1":
+            # Effectuer l'action 1
+            # audio_thread = threading.Thread(target=record_audio2)
+            # audio_thread.start()
+            # marose = 1
+            # print(marose)
+            # TempEvent1 = int(datetime.datetime.now().strftime('%M'))
+            record_audio2()
+        time.sleep(130)
+        copier_fichier()
+    # copier_fichier
+    return render(request, 'streaming/index.html')
+
+def event(request):
+    return render(request, 'streaming/index_event.html')
 
 def gen(camera):
 	while True:
@@ -30,9 +69,10 @@ def gen(camera):
 		yield (b'--frame\r\n'
 				b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
+
+
 def VideoCamera_feed(request):
-    if request.method == 'POST':
-        return redirect('streaming/VideoCamera_Event')
+    FolderCur = 'DataFileSystem\\General\\videos\\'        
     return StreamingHttpResponse(generate(VideoCamera(), FolderCur),
 					content_type='multipart/x-mixed-replace; boundary=frame')
 
@@ -42,7 +82,7 @@ def record_audio2():
     CHANNELS = 1
     RATE = 44100
     RECORD_SECONDS = 60
-    name = str(datetime.datetime.now().strftime('output_%H%M%S'))
+    name = str(datetime.datetime.now().strftime('output_%H%M'))
     WAVE_OUTPUT_FILENAME = f"DataFileSystem\\Events\\phonecalls\\{name}.wav"    
     frames = []
     # if request.method == 'GET':
@@ -67,20 +107,22 @@ def record_audio2():
 # else:
 #     pass
 def VideoCamera_Event(request):
-    if request.method == 'GET':
-        audio_thread = threading.Thread(target=record_audio2)
-        audio_thread.start()
-        FolderCur = 'DataFileSystem\\Events\\videos\\'
-        # return StreamingHttpResponse(generate(VideoCamera(), FolderCur),
-		# 	        content_type='multipart/x-mixed-replace; boundary=frame')
+    if request.method == "POST":
+        action = request.POST.get("action")  # Récupérer la valeur de l'action du bouton
+        
+        if action == "action1":
+            # Effectuer l'action 1
+            audio_thread = threading.Thread(target=record_audio2)
+            audio_thread.start()
+            # record_audio2
+    # FolderCur = 'DataFileSystem\\Events\\videos\\'
     return StreamingHttpResponse(generate(VideoCamera(), FolderCur),
-			        content_type='multipart/x-mixed-replace; boundary=frame')
+                content_type='multipart/x-mixed-replace; boundary=frame')
 
 
 def LiveWebCam_feed(request):
 	return StreamingHttpResponse(generate(LiveWebCam()),
 					content_type='multipart/x-mixed-replace; boundary=frame')
-
 
 def videorecordinframe_feed(request):
 	return videorecordinframe()

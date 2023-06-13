@@ -31,14 +31,13 @@ class LiveWebCam(object):
 		return jpeg.tobytes()
 
 
-FolderCur = 'DataFileSystem\\General\\videos\\' + str(datetime.datetime.now().strftime('DocArchive_%Y-%m-%d'))
-FolderCur = os.path.join(os.getcwd(), str(FolderCur))
-print("ALL logs saved in dir:", FolderCur)
-if not os.path.exists(FolderCur):
-    os.mkdir(FolderCur)
-else:
-    pass
-
+FolderCur = 'DataFileSystem\\General\\videos\\' # + str(datetime.datetime.now().strftime('DocArchive_%Y-%m-%d'))
+# FolderCur = os.path.join(os.getcwd(), str(FolderCur))
+# print("ALL logs saved in dir:", FolderCur)
+# if not os.path.exists(FolderCur):
+#     os.mkdir(FolderCur)
+# else:
+#     pass
 
 def generate(camera, FolderCur):
     # FolderCur = 'DataFileSystem\\General\\videos\\' + str(datetime.datetime.now().strftime('DocArchive_%Y-%m-%d'))
@@ -48,22 +47,20 @@ def generate(camera, FolderCur):
     #     os.mkdir(FolderCur)
     # else:
     #     pass
-    namecur = datetime.datetime.now().strftime('%H-%M-%S')
-    video_file_count = int((datetime.datetime.now().strftime('%H%M%S')))
-    video_file = os.path.join(FolderCur, f"coupon_{namecur}.mp4")
+    namecur = datetime.datetime.now().strftime('%Y%m%d-%H%M.mp4')
+    video_file = os.path.join(FolderCur, namecur)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(video_file, fourcc, 24, (640, 480))
     start = time.time()
-    video_file_count = int((datetime.datetime.now().strftime('%H%M%S')))
+    # video_file_count = int((datetime.datetime.now().strftime('%H%M%S')))
     out = cv2.VideoWriter(video_file, fourcc, 24, (640, 480))
     while True:
         frame = camera.get_frame()
         image = cv2.imdecode(np.frombuffer(frame, np.uint8), cv2.IMREAD_UNCHANGED)
-        if time.time() - start > 60:
-            namecur = datetime.datetime.now().strftime('%H-%M-%S')
+        if time.time() - start >= 60:
+            namecur = datetime.datetime.now().strftime('%Y%m%d-%H%M.mp4')
             start = time.time()
-            video_file_count += 60
-            video_file = os.path.join(FolderCur, f"coupon_{namecur}.mp4")
+            # video_file_count += 60
+            video_file = os.path.join(FolderCur, namecur)
             out = cv2.VideoWriter(video_file, fourcc, 24, (640, 480))
         out.write(image)
         if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -71,6 +68,44 @@ def generate(camera, FolderCur):
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
+def generateven(camera, FolderCur):
+    # FolderCur = 'DataFileSystem\\General\\videos\\' + str(datetime.datetime.now().strftime('DocArchive_%Y-%m-%d'))
+    # FolderCur = os.path.join(os.getcwd(), str(FolderCur))
+    # print("ALL logs saved in dir:", FolderCur)
+    # if not os.path.exists(FolderCur):
+    #     os.mkdir(FolderCur)
+    # else:
+    #     pass
+    namecur = datetime.datetime.now().strftime('%H-%M-%S')
+    # video_file_count = int((datetime.datetime.now().strftime('%H%M%S')))
+    video_file = os.path.join(FolderCur, f"coupon_{namecur}.mp4")
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(video_file, fourcc, 24, (640, 480))
+    # start = time.time()
+    # video_file_count = int((datetime.datetime.now().strftime('%H%M%S')))
+    out = cv2.VideoWriter(video_file, fourcc, 24, (640, 480))
+    frame = camera.get_frame()
+    image = cv2.imdecode(np.frombuffer(frame, np.uint8), cv2.IMREAD_UNCHANGED)
+    record_duration = 60  # Durée d'enregistrement en secondes
+    start_time = datetime.datetime.now()  # Temps de départ de l'enregistrement
+    elapsed_time = 0
+    duration = 60
+    while (datetime.datetime.now() - start_time).total_seconds() < duration:
+        frame = camera.get_frame()
+        image = cv2.imdecode(np.frombuffer(frame, np.uint8), cv2.IMREAD_UNCHANGED)
+        out.write(image)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+# start_time = cv2.getTickCount()
+# while (cv2.getTickCount() - start_time) / cv2.getTickFrequency() < video_duration:
+#     ret, frame = video_capture.read()
+#     if ret:
+#         video_writer.write(frame)
+#     else:
+#         break
 
 def videorecordinframe():
     fps = 24

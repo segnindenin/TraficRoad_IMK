@@ -5,6 +5,7 @@ from streaming import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('event', views.event, name='Event'),
     path('VideoCamera_feed', views.VideoCamera_feed, name='VideoCamera_feed'),
 	path('LiveWebCam_feed', views.LiveWebCam_feed, name='LiveWebCam_feed'),
 	path('videorecordinframe_feed', views.videorecordinframe_feed, name='videorecordinframe_feed'),
